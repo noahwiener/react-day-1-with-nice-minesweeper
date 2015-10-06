@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Weather Widget</title>
+    <script src="https://fb.me/react-0.13.3.js" charset="utf-8"></script>
+    <script src="https://fb.me/JSXTransformer-0.13.3.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id='weatherClock'></div>
+    <div id='weather'></div>
+    <script type="text/jsx">
+      var Clock = React.createClass({
+        getInitialState: function() {
+          return { currentTime: new Date() };
+        },
+        componentDidMount: function() {
+          this.timeInterval = setInterval( this._tick, 1000);
+        },
+        _tick: function() {
+          this.setState( {currentTime: new Date()});
+        },
+        render: function() {
+          // debugger;
+          return <div>{this.state.currentTime.toString()}</div>
+        }
+      });
+
+      var WeatherWidget = React.createClass({
+        getInitialState: function() {
+          return ({ weather: "Loading", temp: "Loading"});
+        },
+
+        componentDidMount: function() {
+          var geo = navigator.geolocation;
+          geo.getCurrentPosition(this.getCurrentWeather);
+        },
+
+        getCurrentWeather: function(pos) {
+          var request = new XMLHttpRequest();
+          var crd = pos.coords;
+          lat = crd.latitude.toFixed(2);
+          long = crd.longitude.toFixed(2);
+
+          var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
+          lat + '&lon=' + long;
+
+          request.open("GET", url, true);
+          request.onload = this.parseCurrentWeather.bind(this, request);
+          request.onerror = function() {console.log('fail')};
+          request.send();
+        },
+
+        parseCurrentWeather: function(request){
+          var response = request.responseText;
+          var weatherParams = JSON.parse(response);
+          var temp = weatherParams.main.temp - 273;
+          var weather = weatherParams.weather[0].description;
+          this.setState({ temp: temp.toFixed(0), weather: weather});
+        },
+
+        render: function (){
+          // debugger;
+          return <div>Temp: { this.state.temp } C, Weather: { this.state.weather }</div>;
+        }
+      })
+
+      React.render(<Clock/>, document.getElementById('weatherClock'));
+      React.render(<WeatherWidget />, document.getElementById('weather'));
+    </script>
+  </body>
+</html>

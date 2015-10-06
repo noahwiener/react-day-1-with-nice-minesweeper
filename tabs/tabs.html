@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tabs</title>
+    <script src="https://fb.me/react-0.13.3.js" charset="utf-8"></script>
+    <script src="https://fb.me/JSXTransformer-0.13.3.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id='tabs'></div>
+    <script type="text/jsx">
+      var languages = [
+        {title: "Ruby", content: "Easy to learn language made popular with rails"},
+        {title: "Javascript", content: "Primary language used on the web"},
+        {title: "C++", content: "Used for low level application programming and operating systems"},
+        {title: "Python", content: "Popular alternative to Ruby named after a snake"}
+      ];
+
+      var Tabs = React.createClass({
+        getInitialState: function(){
+          return { selectedId: 0 };
+        },
+
+        clickHandler: function (event){
+          var id = event.target.getAttribute("id");
+          this.setState({selectedId: parseInt(id)});
+          debugger;
+        },
+        render: function() {
+          // var title;
+          // if (this.state.selectedId === idx) {
+          //   title
+          // } else {
+          //
+          // }
+
+          return (<div>
+                    <ul>
+                      {
+                      this.props.tabs.map(function(el, idx) {
+                        return (this.state.selectedId === idx) ? <li onClick={this.clickHandler} id={idx}><strong>{el.title}</strong></li> : <li onClick={this.clickHandler} id={idx}>{el.title}</li>
+                      }.bind(this))
+                      }
+                    </ul>
+                    <article>
+                      { this.props.tabs[this.state.selectedId].content }
+                    </article>
+                  </div>);
+        }
+      });
+
+
+      React.render(
+        <Tabs tabs={languages} />,
+        document.getElementById('tabs')
+      );
+    </script>
+  </body>
+</html>

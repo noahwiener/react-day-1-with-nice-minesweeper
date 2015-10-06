@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Widgets</title>
+
+    <script src="https://fb.me/react-0.13.3.js" charset="utf-8"></script>
+    <script src="https://fb.me/JSXTransformer-0.13.3.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="autocomplete">
+
+    </div>
+
+
+
+    <script type="text/jsx">
+      var names = ['charles', 'eric', 'judy', 'jade', 'jeff', 'max', 'jon'];
+
+      var List = React.createClass({
+        render: function() {
+          return (
+            <ul>
+              {
+                this.props.list.map(function(el, idx) {
+                  return <li onClick={this.props.clickHandler} id={idx}>{el}</li>
+                }.bind(this))
+              }
+            </ul>
+          )
+        }
+      });
+
+      var Auto = React.createClass({
+        getInitialState: function(){
+          return {searchString: ''};
+        },
+
+      filter: function (string) {
+          // debugger;
+          this.setState({searchString: string});
+        },
+      handleClick: function(event) {
+        var searchString = event.target.textContent;
+        this.filter(searchString);
+      },
+      handleChange: function(event) {
+        var searchString = event.target.value;
+        this.filter(searchString);
+      },
+      render: function () {
+        var filteredNames = this.props.names,
+          searchString = this.state.searchString.trim().toLowerCase();
+        if (this.state.searchString.length > 0) {
+          filteredNames = filteredNames.filter(function(name) {
+            return name.toLowerCase().match("^" + searchString);
+          })
+        }
+        return (
+        <div>
+          <input value={this.state.searchString} onChange={this.handleChange} placeholder="type" />
+          <List clickHandler={this.handleClick} list={filteredNames} />
+        </div>);
+      }
+      });
+
+      React.render(
+        <Auto names={names} />,
+        document.getElementById("autocomplete")
+      )
+    </script>
+  </body>
+</html>
